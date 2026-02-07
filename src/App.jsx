@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import clubsData from "./clubs.json";
-import vendorsData from "./vendors.json"; 
+import vendorsData from "./vendors.json";
+import requestsData from "./requests.json";
 
 /**
  * Simple localStorage hook (so hearts + registered clubs persist across refresh)
@@ -79,6 +80,11 @@ export default function App() {
   const allClubs = [...clubsData, ...userClubs];
   const allVendors = vendorsData;
 
+  // ✅ Requests state (seed + user-added)
+  const [userRequests, setUserRequests] = useLocalStorageState("userRequests", []);
+  const allRequests = [...requestsData, ...userRequests];
+  const [isRequestOpen, setIsRequestOpen] = useState(false);
+
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
 
   const [selectedTags, setSelectedTags] = useState([]);
@@ -88,64 +94,81 @@ export default function App() {
 
   const q = normalize(search);
 
-const DISCOVER_TAGS = useMemo(
-  () => [
-    "technology",
-    "women",
-    "sports",
-    "service",
-    "business",
-    "engineering",
-    "creative",
-    "culture",
-    "career",
-    "health",
-    "computer science",
-    "math",
-    "cybersecurity",
-  ],
-  []
-);
+  const DISCOVER_TAGS = useMemo(
+    () => [
+      "technology",
+      "women",
+      "sports",
+      "service",
+      "business",
+      "engineering",
+      "creative",
+      "culture",
+      "career",
+      "health",
+      "computer science",
+      "math",
+      "cybersecurity",
+    ],
+    []
+  );
 
+  const [themeTags] = useState(() =>
+    pickRandomUnique(DISCOVER_TAGS, Math.min(10, DISCOVER_TAGS.length))
+  );
 
-const [themeTags] = useState(() =>
-  pickRandomUnique(DISCOVER_TAGS, Math.min(10, DISCOVER_TAGS.length))
-);
+  const discoverItems = useMemo(() => {
+    // CLUBS
+    if (discoverMode === "clubs") {
+      return allClubs
+        .filter((club) => clubMatchesSelectedTags(club, selectedTags))
+        .filter((club) => matchesQuery(club, q));
+    }
 
-  
-const discoverItems = useMemo(() => {
-  // CLUBS
-  if (discoverMode === "clubs") {
-    return allClubs
-      .filter((club) => clubMatchesSelectedTags(club, selectedTags))
-      .filter((club) => matchesQuery(club, q));
-  }
+    // VENDORS
+    if (discoverMode === "vendors") {
+      return allVendors.filter((vendor) => {
+        if (!q) return true;
 
-  // VENDORS
-  if (discoverMode === "vendors") {
-    return allVendors.filter((vendor) => {
-      if (!q) return true;
+        const fields = [
+          vendor.name,
+          vendor.description,
+          ...(vendor.services || []),
+          ...(vendor.vibes || []),
+          ...(vendor.tags || []),
+          ...(vendor.availability || []),
+          vendor.price_range,
+        ]
+          .join(" ")
+          .toLowerCase();
 
-      const fields = [
-        vendor.name,
-        vendor.description,
-        ...(vendor.services || []),
-        ...(vendor.vibes || []),
-        ...(vendor.tags || []),
-        ...(vendor.availability || []),
-        vendor.price_range,
-      ]
-        .join(" ")
-        .toLowerCase();
+        return fields.includes(q);
+      });
+    }
 
-      return fields.includes(q);
-    });
-  }
+    // ✅ REQUESTS
+    if (discoverMode === "requests") {
+      return allRequests.filter((req) => {
+        if (!q) return true;
 
-  // REQUESTS (later)
-  return [];
-}, [discoverMode, allClubs, allVendors, selectedTags, q]);
+        const fields = [
+          req.club_name,
+          req.title,
+          req.description,
+          ...(req.needs || []),
+          req.budget,
+          req.date,
+          req.time_window,
+        ]
+          .join(" ")
+          .toLowerCase();
 
+        return fields.includes(q);
+      });
+    }
+
+    return [];
+  }, [discoverMode, allClubs, allVendors, allRequests, selectedTags, q]);
 
   function toggleHeart(id) {
     setHeartedIds((prev) => {
@@ -158,6 +181,12 @@ const discoverItems = useMemo(() => {
   function addClub(newClub) {
     setUserClubs((prev) => [newClub, ...prev]);
     setIsRegisterOpen(false);
+  }
+
+  // ✅ add request (saved in localStorage)
+  function addRequest(newReq) {
+    setUserRequests((prev) => [newReq, ...prev]);
+    setIsRequestOpen(false);
   }
 
   function toggleTag(tag) {
@@ -205,7 +234,6 @@ const discoverItems = useMemo(() => {
         </button>
       </div>
 
-      {}
       <main style={styles.grid}>
         {/* LEFT: Your Clubs */}
         <section style={styles.panel}>
@@ -215,9 +243,7 @@ const discoverItems = useMemo(() => {
           </div>
 
           {heartedClubs.length === 0 ? (
-            <p style={styles.muted}>
-              Heart a club to pin it here.
-            </p>
+            <p style={styles.muted}>Heart a club to pin it here.</p>
           ) : (
             <div style={styles.list}>
               {heartedClubs.map((club) => (
@@ -239,7 +265,8 @@ const discoverItems = useMemo(() => {
             <h2 style={styles.h2}>🔍 Discover</h2>
             <span style={styles.countPill}>{discoverItems.length}</span>
           </div>
-                    {/* ✅ Toggle: what you're discovering */}
+
+          {/* ✅ Toggle: what you're discovering */}
           <div style={{ display: "flex", gap: 8, marginTop: 10, flexWrap: "wrap" }}>
             {["clubs", "vendors", "requests"].map((m) => {
               const active = discoverMode === m;
@@ -263,36 +290,45 @@ const discoverItems = useMemo(() => {
             })}
           </div>
 
-{discoverMode === "clubs" && (
-  <>
-    <p style={styles.muted}>
-      Pick a theme to explore (these rotate). You can also search.
-    </p>
+          {/* ✅ Post request button (only on Requests tab) */}
+          {discoverMode === "requests" && (
+            <div style={{ marginTop: 10 }}>
+              <button style={styles.smallBtn} onClick={() => setIsRequestOpen(true)}>
+                ➕ Post a Request
+              </button>
+            </div>
+          )}
 
-    <div style={styles.chipsWrap}>
-      {themeTags.map((tag) => {
-        const active = selectedTags.some(
-          (t) => normalize(t) === normalize(tag)
-        );
+          {discoverMode === "clubs" && (
+            <>
+              <p style={styles.muted}>
+                Pick a theme to explore (these rotate). You can also search.
+              </p>
 
-        return (
-          <button
-            key={tag}
-            type="button"
-            onClick={() => toggleTag(tag)}
-            style={{
-              ...styles.chip,
-              background: active ? "#eaf2ff" : "white",
-              borderColor: active ? "#3d8cfb" : "#ddd",
-            }}
-          >
-            {tag}
-          </button>
-        );
-      })}
-    </div>
-  </>
-)}
+              <div style={styles.chipsWrap}>
+                {themeTags.map((tag) => {
+                  const active = selectedTags.some(
+                    (t) => normalize(t) === normalize(tag)
+                  );
+
+                  return (
+                    <button
+                      key={tag}
+                      type="button"
+                      onClick={() => toggleTag(tag)}
+                      style={{
+                        ...styles.chip,
+                        background: active ? "#eaf2ff" : "white",
+                        borderColor: active ? "#3d8cfb" : "#ddd",
+                      }}
+                    >
+                      {tag}
+                    </button>
+                  );
+                })}
+              </div>
+            </>
+          )}
 
           {selectedTags.length ? (
             <p style={styles.filterLine}>
@@ -302,7 +338,9 @@ const discoverItems = useMemo(() => {
           ) : null}
 
           {discoverItems.length === 0 ? (
-            <p style={styles.muted}>(No matches yet — try a different tag or search.)</p>
+            <p style={styles.muted}>
+              (No matches yet — try a different tag or search.)
+            </p>
           ) : (
             <div style={styles.list}>
               {discoverMode === "clubs" &&
@@ -319,9 +357,13 @@ const discoverItems = useMemo(() => {
                 discoverItems.map((vendor) => (
                   <VendorTile key={vendor.id} vendor={vendor} />
                 ))}
+
+              {discoverMode === "requests" &&
+                discoverItems.map((req) => (
+                  <RequestTile key={req.id} req={req} />
+                ))}
             </div>
           )}
-
         </section>
       </main>
 
@@ -334,14 +376,31 @@ const discoverItems = useMemo(() => {
               ✕
             </button>
           </div>
-          <p style={styles.modalSubtext}>
-            Add your org to the directory. Saved locally for demo.
-          </p>
+          <p style={styles.modalSubtext}>Add your org to the directory. Saved locally for demo.</p>
 
           <NewClubForm
             existingIds={new Set(allClubs.map((c) => c.id))}
             onAddClub={addClub}
             onCancel={() => setIsRegisterOpen(false)}
+          />
+        </Modal>
+      ) : null}
+
+      {/* ✅ Request Modal */}
+      {isRequestOpen ? (
+        <Modal onClose={() => setIsRequestOpen(false)}>
+          <div style={styles.modalHeader}>
+            <h2 style={{ margin: 0, fontSize: 18 }}>➕ Post a Vendor Request</h2>
+            <button onClick={() => setIsRequestOpen(false)} style={styles.xBtn}>
+              ✕
+            </button>
+          </div>
+          <p style={styles.modalSubtext}>Saved locally for demo.</p>
+
+          <NewRequestForm
+            existingIds={new Set(allRequests.map((r) => r.id))}
+            onAddRequest={addRequest}
+            onCancel={() => setIsRequestOpen(false)}
           />
         </Modal>
       ) : null}
@@ -410,12 +469,42 @@ function VendorTile({ vendor }) {
       </div>
 
       {vendor.contact ? (
-        <a
-          href={vendor.contact}
-          target="_blank"
-          rel="noreferrer"
-          style={styles.link}
-        >
+        <a href={vendor.contact} target="_blank" rel="noreferrer" style={styles.link}>
+          Contact →
+        </a>
+      ) : (
+        <span style={styles.noLink}>No contact link provided</span>
+      )}
+    </article>
+  );
+}
+
+function RequestTile({ req }) {
+  return (
+    <article style={styles.card}>
+      <h3 style={styles.cardTitle}>{req.title}</h3>
+      <p style={styles.cardDesc}>
+        <b>{req.club_name}</b> — {req.description}
+      </p>
+
+      <div style={styles.tagsArea}>
+        <TagRow label="Needs" items={req.needs} />
+      </div>
+
+      <div style={{ marginTop: 10, fontSize: 12, color: "#666" }}>
+        <div>
+          <b>Budget:</b> {req.budget || "N/A"}
+        </div>
+        <div>
+          <b>Date:</b> {req.date || "N/A"}
+        </div>
+        <div>
+          <b>Time:</b> {req.time_window || "N/A"}
+        </div>
+      </div>
+
+      {req.contact ? (
+        <a href={req.contact} target="_blank" rel="noreferrer" style={styles.link}>
           Contact →
         </a>
       ) : (
@@ -546,24 +635,137 @@ function NewClubForm({ existingIds, onAddClub, onCancel }) {
         </button>
       </div>
 
-      <p style={styles.formHint}>
-        Saved locally for demo. In production, this would submit to a database.
-      </p>
+      <p style={styles.formHint}>Saved locally for demo. In production, this would submit to a database.</p>
+    </form>
+  );
+}
+
+function NewRequestForm({ existingIds, onAddRequest, onCancel }) {
+  const [clubName, setClubName] = useState("");
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [needs, setNeeds] = useState("");
+  const [budget, setBudget] = useState("$$");
+  const [date, setDate] = useState("");
+  const [timeWindow, setTimeWindow] = useState("");
+  const [contact, setContact] = useState("");
+
+  function nextId() {
+    let id = Math.floor(Math.random() * 1000000) + 300;
+    while (existingIds.has(id)) id++;
+    return id;
+  }
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    if (!clubName.trim() || !title.trim()) return;
+
+    const newReq = {
+      id: nextId(),
+      club_name: clubName.trim(),
+      title: title.trim(),
+      description: description.trim() || "No description provided yet.",
+      needs: needs.split(",").map((s) => s.trim()).filter(Boolean),
+      budget: budget.trim(),
+      date: date.trim(),
+      time_window: timeWindow.trim(),
+      contact: contact.trim(),
+    };
+
+    onAddRequest(newReq);
+
+    setClubName("");
+    setTitle("");
+    setDescription("");
+    setNeeds("");
+    setBudget("$$");
+    setDate("");
+    setTimeWindow("");
+    setContact("");
+  }
+
+  return (
+    <form onSubmit={handleSubmit} style={styles.formGrid}>
+      <input
+        value={clubName}
+        onChange={(e) => setClubName(e.target.value)}
+        placeholder="Club name (required)"
+        style={styles.input}
+      />
+
+      <input
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+        placeholder="Request title (required)"
+        style={styles.input}
+      />
+
+      <textarea
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
+        placeholder="Details (how many people, what you need, etc.)"
+        rows={3}
+        style={styles.textarea}
+      />
+
+      <input
+        value={needs}
+        onChange={(e) => setNeeds(e.target.value)}
+        placeholder="Needs (comma separated) e.g. chai, halal, photography"
+        style={styles.input}
+      />
+
+      <input
+        value={budget}
+        onChange={(e) => setBudget(e.target.value)}
+        placeholder="Budget e.g. $, $$, $$$"
+        style={styles.input}
+      />
+
+      <input
+        value={date}
+        onChange={(e) => setDate(e.target.value)}
+        placeholder="Date (optional) e.g. 2026-03-10"
+        style={styles.input}
+      />
+
+      <input
+        value={timeWindow}
+        onChange={(e) => setTimeWindow(e.target.value)}
+        placeholder="Time window (optional) e.g. 6pm–10pm"
+        style={styles.input}
+      />
+
+      <input
+        value={contact}
+        onChange={(e) => setContact(e.target.value)}
+        placeholder="Contact link (optional)"
+        style={styles.input}
+      />
+
+      <div style={styles.modalActions}>
+        <button type="button" onClick={onCancel} style={styles.secondaryBtn}>
+          Cancel
+        </button>
+        <button type="submit" style={styles.primaryBtn}>
+          Post
+        </button>
+      </div>
     </form>
   );
 }
 
 const styles = {
   page: {
-  width: "100%",
-  minHeight: "100vh",
-  margin: 0,
-  padding: 20,
-  boxSizing: "border-box",
-  color: "#111827",
-  fontFamily:
-    'ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial',
-},
+    width: "100%",
+    minHeight: "100vh",
+    margin: 0,
+    padding: 20,
+    boxSizing: "border-box",
+    color: "#111827",
+    fontFamily:
+      'ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial',
+  },
 
   header: {
     display: "flex",
