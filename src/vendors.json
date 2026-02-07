@@ -1,0 +1,90 @@
+[
+  {
+    "id": 201,
+    "name": "Chai Cart",
+    "description": "A mobile chai and snacks vendor serving fresh karak chai and South Asian treats, perfect for campus events.",
+    "services": ["beverages", "chai", "snacks"],
+    "vibes": ["cozy", "cultural", "student-friendly"],
+    "price_range": "$",
+    "availability": ["weekends", "evenings"],
+    "tags": ["halal", "student-owned"],
+    "contact": "https://instagram.com/chaicart"
+  },
+  {
+    "id": 202,
+    "name": "Melted Bites",
+    "description": "Dessert-focused vendor offering cookies, brownies, and bite-sized sweets for events and fundraisers.",
+    "services": ["desserts", "baked-goods"],
+    "vibes": ["sweet", "aesthetic", "crowd-pleaser"],
+    "price_range": "$$",
+    "availability": ["weekends"],
+    "tags": ["desserts", "event-favorite"],
+    "contact": "https://instagram.com/meltedbites"
+  },
+  {
+    "id": 203,
+    "name": "Bobawala",
+    "description": "Popular bubble tea vendor offering milk teas, fruit teas, and custom toppings for large events.",
+    "services": ["beverages", "boba"],
+    "vibes": ["fun", "trendy", "high-energy"],
+    "price_range": "$$",
+    "availability": ["weekends", "evenings"],
+    "tags": ["boba", "youth-favorite"],
+    "contact": "https://instagram.com/bobawala"
+  },
+  {
+    "id": 204,
+    "name": "Gathers",
+    "description": "Modern catering and refreshments vendor focused on bringing people together through food and drink.",
+       "services": ["catering", "refreshments"],
+    "vibes": ["professional", "clean", "modern"],
+    "price_range": "$$$",
+    "availability": ["weekdays", "weekends"],
+    "tags": ["catering", "formal-events"],
+    "contact": "https://gathers.co"
+  },
+  {
+    "id": 205,
+    "name": "Overlay",
+    "description": "Creative event vendor providing decor, visuals, and aesthetic setups for club events and showcases.",
+    "services": ["decor", "event-design", "visuals"],
+    "vibes": ["aesthetic", "creative", "premium"],
+    "price_range": "$$$",
+    "availability": ["weekends"],
+    "tags": ["decor", "design"],
+    "contact": "https://instagram.com/overlayevents"
+  },
+  {
+    "id": 206,
+    "name": "Piazza Pizza",
+    "description": "Pizza catering vendor ideal for meetings, socials, and large student events.",
+    "services": ["food", "pizza", "catering"],
+    "vibes": ["casual", "reliable", "crowd-pleaser"],
+    "price_range": "$$",
+    "availability": ["weekdays", "weekends"],
+    "tags": ["pizza", "budget-friendly"],
+    "contact": "https://piazzapizza.com"
+  },
+  {
+    "id": 207,
+    "name": "PhotoKecho",
+    "description": "Event and portrait photographer specializing in campus events, organization showcases, and social media content.",
+    "services": ["photography", "event-coverage", "portraits"],
+    "vibes": ["creative", "professional", "aesthetic"],
+    "price_range": "$$",
+    "availability": ["weekends", "evenings"],
+    "tags": ["photography", "student-owned", "social-media"],
+    "contact": "https://instagram.com/photokecho"
+  },
+  {
+    "id": 208,
+    "name": "Campus Capture",
+    "description": "Student photographer offering affordable event coverage for clubs, fundraisers, and workshops.",
+    "services": ["photography", "event-coverage"],
+    "vibes": ["budget-friendly", "casual", "reliable"],
+    "price_range": "$",
+    "availability": ["weekends"],
+    "tags": ["photography", "budget-friendly", "student-owned"],
+    "contact": "https://instagram.com/campuscapture"
+  }
+]

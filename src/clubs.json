@@ -1,0 +1,110 @@
+[
+  {
+    "id": 1,
+    "name": "Women in Computer Science (WiCs)",
+    "description": "A community that supports and empowers women pursuing computer science at UIC.",
+    "interests": ["technology", "computer science", "women", "career", "engineering"],
+    "vibes": ["professional", "supportive"],
+    "collab_needs": ["cohost", "speaker"],
+    "contact": "https://www.instagram.com/wicsatuic"
+  },
+  {
+    "id": 2,
+    "name": "Women in Cybersecurity (WiCys)",
+    "description": "Empowering women interested in cybersecurity through workshops, talks, and networking.",
+    "interests": ["technology", "cybersecurity", "women", "computer science", "engineering"],
+    "vibes": ["professional", "high-energy"],
+    "collab_needs": ["speaker"],
+    "contact": "https://www.instagram.com/wicysatuic"
+  },
+  {
+    "id": 3,
+    "name": "Linux User Group (LuG)",
+    "description": "A space for students interested in Linux, open-source software, and systems.",
+    "interests": ["technology", "open-source"],
+    "vibes": ["chill", "technical"],
+    "collab_needs": ["cohost"],
+    "contact": "https://www.instagram.com/lugatuic"
+  },
+  {
+    "id": 4,
+    "name": "Logica (LoG)",
+    "description": "A club for students who enjoy logic, puzzles, and competitive problem-solving.",
+    "interests": ["logic", "problem-solving", "math"],
+    "vibes": ["academic", "competitive"],
+    "collab_needs": ["crosspromo"],
+    "contact": "https://www.instagram.com/logicaatuic"
+  },
+  {
+    "id": 5,
+    "name": "Association for Computing Machinery (ACM)",
+    "description": "UIC’s largest computing organization focused on technical growth and career development.",
+    "interests": ["technology", "ccmputer science", "career"],
+    "vibes": ["professional"],
+    "collab_needs": ["cohost", "sponsor"],
+    "contact": "https://www.instagram.com/acmatuic"
+  },
+  {
+    "id": 6,
+    "name": "Society of Women Engineers (SWE)",
+    "description": "Supporting women in engineering through mentorship, networking, and outreach.",
+    "interests": ["engineering", "career", "women", "technology"],
+    "vibes": ["professional", "supportive"],
+    "collab_needs": ["speaker", "cohost"],
+    "contact": "https://www.instagram.com/swe_at_uic"
+  },
+  {
+    "id": 7,
+    "name": "Impactful Relief",
+    "description": "Support Islamic Relief initiatives and fundraise for people in need all over the world.",
+    "interests": ["islam", "service"],
+    "vibes": ["community", "supportive"],
+    "collab_needs": ["vendor"],
+    "contact": "https://www.instagram.com/iratuic"
+  },
+  {
+    "id": 8,
+    "name": "Al-Bayyan",
+    "description": "A platform for UIC students to express themselves.",
+    "interests": ["art", "creative", "social justice"],
+    "vibes": ["chill", "friendly"],
+    "collab_needs": ["vendor"],
+    "contact": "https://www.instagram.com/albayyanatuic"
+  },
+  {
+    "id": 9,
+    "name": "Threads of Heritage",
+    "description": "Explore cultural arts & heritage at UIC",
+    "interests": ["creative", "culture", "stitch"],
+    "vibes": ["chill", "fun"],
+    "collab_needs": ["speaker", "cohost"],
+    "contact": "https://www.instagram.com/toh.at.uic"
+  },
+  {
+    "id": 10,
+    "name": "The Pre-Health Society of Chicago",
+    "description": "Bulding future healthcare leaders through education, service, and community.",
+    "interests": ["health", "premed", "service"],
+    "vibes": ["professional", "supportive"],
+    "collab_needs": ["cohost"],
+    "contact": "https://www.instagram.com/prehealthsoc"
+  },
+  {
+    "id": 11,
+    "name": "United Women's Network",
+    "description": "A business-focused network empowering women through professional development, leadership, and entrepreneurship.",
+    "interests": ["business", "networking", "career", "entrepreneurship"],
+    "vibes": ["professional", "ambitious"],
+    "collab_needs": ["panels", "networking-events"],
+    "contact": "https://instagram.com/uicuwm"
+  },
+  {
+    "id": 12,
+    "name": "UIC Cricket Club",
+    "description": "A student organization bringing together cricket enthusiasts for practices, matches, and tournaments.",
+    "interests": ["sports", "cricket", "culture"],
+    "vibes": ["high-energy", "community"],
+    "collab_needs": ["tournaments", "sponsorship"],
+    "contact": "https://instagram.com/uiccricket"
+  }
+] 
