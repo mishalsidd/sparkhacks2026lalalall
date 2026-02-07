@@ -39,10 +39,10 @@ LoopedIn connects students with student-run organizations on campus and allows o
 
 ## Project Structure
 
-  App.js – main app logic, search, filtering, and UI rendering.
-  clubs.json – seed dataset for demo clubs.
-  components/ – reusable components (ClubTile, Modal, NewClubForm, TagRow).
-  App.css – global styles and responsive layout.
+- App.js – main app logic, search, filtering, and UI rendering.
+- clubs.json – seed dataset for demo clubs.
+- components/ – reusable components (ClubTile, Modal, NewClubForm, TagRow).
+- App.css – global styles and responsive layout.
 
 # Contributions
 LoopedIn is currently a demo, but we are open to contributions!
