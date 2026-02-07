@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import clubsData from "./clubs.json";
-import "./App.css";
+
 
 /**
  * Simple localStorage hook (so hearts + registered clubs persist across refresh)
@@ -149,9 +149,9 @@ const discoverClubs = useMemo(() => {
     <div style={styles.page}>
       <header style={styles.header}>
         <div>
-          <h1 style={styles.title}>UIC Club Spotlight</h1>
+          <h1 style={styles.title}>LoopedIn</h1>
           <p style={styles.subtitle}>
-            Discover orgs fairly. ❤️ the ones you want on your home screen.
+            Stay in the loop! Discover orgs & vendors fairly ❤️
           </p>
         </div>
 
@@ -485,7 +485,7 @@ function NewClubForm({ existingIds, onAddClub, onCancel }) {
 
 const styles = {
   page: {
-  width: "100vw",
+  width: "100%",
   minHeight: "100vh",
   margin: 0,
   padding: 20,
@@ -591,6 +591,7 @@ const styles = {
     background: "white",
     cursor: "pointer",
     fontSize: 12,
+    color: "black",
   },
   filterLine: { margin: "10px 0 0 0", fontSize: 12, color: "#666" },
   filterTags: { color: "#111827", fontWeight: 600 },
