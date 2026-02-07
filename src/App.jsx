@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import clubsData from "./clubs.json";
-
+import vendorsData from "./vendors.json"; 
 
 /**
  * Simple localStorage hook (so hearts + registered clubs persist across refresh)
@@ -77,6 +77,7 @@ export default function App() {
 
   const [userClubs, setUserClubs] = useLocalStorageState("userClubs", []);
   const allClubs = [...clubsData, ...userClubs];
+  const allVendors = vendorsData;
 
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
 
@@ -112,12 +113,39 @@ const [themeTags] = useState(() =>
 );
 
   
-const discoverClubs = useMemo(() => {
-  if (discoverMode !== "clubs") return [];
-  return allClubs
-    .filter((club) => clubMatchesSelectedTags(club, selectedTags))
-    .filter((club) => matchesQuery(club, q));
-}, [discoverMode, allClubs, selectedTags, q]);
+const discoverItems = useMemo(() => {
+  // CLUBS
+  if (discoverMode === "clubs") {
+    return allClubs
+      .filter((club) => clubMatchesSelectedTags(club, selectedTags))
+      .filter((club) => matchesQuery(club, q));
+  }
+
+  // VENDORS
+  if (discoverMode === "vendors") {
+    return allVendors.filter((vendor) => {
+      if (!q) return true;
+
+      const fields = [
+        vendor.name,
+        vendor.description,
+        ...(vendor.services || []),
+        ...(vendor.vibes || []),
+        ...(vendor.tags || []),
+        ...(vendor.availability || []),
+        vendor.price_range,
+      ]
+        .join(" ")
+        .toLowerCase();
+
+      return fields.includes(q);
+    });
+  }
+
+  // REQUESTS (later)
+  return [];
+}, [discoverMode, allClubs, allVendors, selectedTags, q]);
+
 
   function toggleHeart(id) {
     setHeartedIds((prev) => {
@@ -149,9 +177,9 @@ const discoverClubs = useMemo(() => {
     <div style={styles.page}>
       <header style={styles.header}>
         <div>
-          <h1 style={styles.title}>LoopedIn</h1>
+          <h1 style={styles.title}>UIC Club Spotlight</h1>
           <p style={styles.subtitle}>
-            Stay in the loop! Discover orgs & vendors fairly ❤️
+            Discover orgs fairly. ❤️ the ones you want on your home screen.
           </p>
         </div>
 
@@ -209,7 +237,7 @@ const discoverClubs = useMemo(() => {
         <section style={styles.panel}>
           <div style={styles.panelHeader}>
             <h2 style={styles.h2}>🔍 Discover</h2>
-            <span style={styles.countPill}>{discoverClubs.length}</span>
+            <span style={styles.countPill}>{discoverItems.length}</span>
           </div>
                     {/* ✅ Toggle: what you're discovering */}
           <div style={{ display: "flex", gap: 8, marginTop: 10, flexWrap: "wrap" }}>
@@ -234,31 +262,37 @@ const discoverClubs = useMemo(() => {
               );
             })}
           </div>
-          <p style={styles.muted}>
-            Pick a theme to explore (these rotate). You can also search.
-          </p>
 
-          {/* Theme tags */}
-          <div style={styles.chipsWrap}>
-            {themeTags.map((tag) => {
-              const active = selectedTags.some((t) => normalize(t) === normalize(tag));
-              return (
-                <button
-                  key={tag}
-                  type="button"
-                  onClick={() => toggleTag(tag)}
-                  style={{
-                    ...styles.chip,
-                    background: active ? "#eaf2ff" : "white",
-                    borderColor: active ? "#3d8cfb" : "#ddd",
-                    color: "#111827",
-                  }}
-                >
-                  {tag}
-                </button>
-              );
-            })}
-          </div>
+{discoverMode === "clubs" && (
+  <>
+    <p style={styles.muted}>
+      Pick a theme to explore (these rotate). You can also search.
+    </p>
+
+    <div style={styles.chipsWrap}>
+      {themeTags.map((tag) => {
+        const active = selectedTags.some(
+          (t) => normalize(t) === normalize(tag)
+        );
+
+        return (
+          <button
+            key={tag}
+            type="button"
+            onClick={() => toggleTag(tag)}
+            style={{
+              ...styles.chip,
+              background: active ? "#eaf2ff" : "white",
+              borderColor: active ? "#3d8cfb" : "#ddd",
+            }}
+          >
+            {tag}
+          </button>
+        );
+      })}
+    </div>
+  </>
+)}
 
           {selectedTags.length ? (
             <p style={styles.filterLine}>
@@ -267,20 +301,27 @@ const discoverClubs = useMemo(() => {
             </p>
           ) : null}
 
-          {discoverClubs.length === 0 ? (
+          {discoverItems.length === 0 ? (
             <p style={styles.muted}>(No matches yet — try a different tag or search.)</p>
           ) : (
             <div style={styles.list}>
-              {discoverClubs.map((club) => (
-                <ClubTile
-                  key={club.id}
-                  club={club}
-                  hearted={heartedIds.includes(club.id)}
-                  onToggleHeart={toggleHeart}
-                />
-              ))}
+              {discoverMode === "clubs" &&
+                discoverItems.map((club) => (
+                  <ClubTile
+                    key={club.id}
+                    club={club}
+                    hearted={heartedIds.includes(club.id)}
+                    onToggleHeart={toggleHeart}
+                  />
+                ))}
+
+              {discoverMode === "vendors" &&
+                discoverItems.map((vendor) => (
+                  <VendorTile key={vendor.id} vendor={vendor} />
+                ))}
             </div>
           )}
+
         </section>
       </main>
 
@@ -346,6 +387,35 @@ function ClubTile({ club, hearted, onToggleHeart }) {
 
       {club.contact ? (
         <a href={club.contact} target="_blank" rel="noreferrer" style={styles.link}>
+          Contact →
+        </a>
+      ) : (
+        <span style={styles.noLink}>No contact link provided</span>
+      )}
+    </article>
+  );
+}
+
+function VendorTile({ vendor }) {
+  return (
+    <article style={styles.card}>
+      <h3 style={styles.cardTitle}>{vendor.name}</h3>
+      <p style={styles.cardDesc}>{vendor.description}</p>
+
+      <div style={styles.tagsArea}>
+        <TagRow label="Services" items={vendor.services} />
+        <TagRow label="Vibes" items={vendor.vibes} />
+        <TagRow label="Tags" items={vendor.tags} />
+        <TagRow label="Avail" items={vendor.availability} />
+      </div>
+
+      {vendor.contact ? (
+        <a
+          href={vendor.contact}
+          target="_blank"
+          rel="noreferrer"
+          style={styles.link}
+        >
           Contact →
         </a>
       ) : (
