@@ -1,0 +1,24 @@
+[
+  {
+    "id": 301,
+    "club_name": "MSA UIC",
+    "title": "Chai + snacks table for qiyam night",
+    "description": "Looking for a chai vendor who can serve ~150 students. Prefer halal and student-friendly pricing.",
+    "needs": ["chai", "snacks", "halal"],
+    "budget": "$$",
+    "date": "2026-03-10",
+    "time_window": "6pm–10pm",
+    "contact": "https://instagram.com/uicmsa"
+  },
+  {
+    "id": 302,
+    "club_name": "UIC Robotics",
+    "title": "Photographer for showcase",
+    "description": "Need event coverage + a few portraits of project teams. 2 hours on campus.",
+    "needs": ["photography", "event-coverage"],
+    "budget": "$$",
+    "date": "2026-03-22",
+    "time_window": "12pm–2pm",
+    "contact": "mailto:robotics@uic.edu"
+  }
+]
