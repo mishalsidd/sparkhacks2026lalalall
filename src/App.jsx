@@ -207,7 +207,7 @@ export default function App() {
         <div>
           <h1 style={styles.title}>UIC Club Spotlight</h1>
           <p style={styles.subtitle}>
-            Find student organizations and campus resources that match your interests, all in one place. 🧩
+            📍 Find student organizations and campus resources that match your interests, all in one place.
           </p>
         </div>
 
